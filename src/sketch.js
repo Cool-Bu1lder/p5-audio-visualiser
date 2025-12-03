@@ -1,3 +1,5 @@
+import p5 from 'p5'
+
 const sketch = (/** @type {p5} */ s) => {
   let sound
   let fft
