@@ -1,17 +1,14 @@
-import './style.css'
-import p5 from 'p5'
-
 // https://editor.p5js.org/jonfroehlich/sketches/d2euV09i
 // https://p5js.org/reference/p5.sound/p5.FFT/
 
-const sketch = (/** @type {p5} */ s) => {
-  s.setup = () => {
-    s.createCanvas(100, 100)
-  }
+import './style.css'
+import p5 from 'p5'
 
-  s.draw = () => {
-    s.background(0, 0, 0)
-  }
-}
+import sketch from './sketch'
 
-new p5(sketch)
+globalThis.p5 = p5
+
+//* hacky solution, but p5 global variable doesn't load intime
+//*  if using normal p5 sound import
+//* p5 needs to be global for sound addon to import
+import('p5/lib/addons/p5.sound').then(() => new p5(sketch))
