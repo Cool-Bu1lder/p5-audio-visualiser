@@ -9,7 +9,7 @@ const sketch = (/** @type {p5} */ s) => {
   }
 
   s.setup = () => {
-    let cnv = s.createCanvas(100, 100)
+    let cnv = s.createCanvas(500, 500)
     cnv.mouseClicked(togglePlay)
     fft = new p5.FFT()
   }
