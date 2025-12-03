@@ -1,7 +1,7 @@
 import p5 from 'p5'
 
 const sketch = (/** @type {p5} */ s) => {
-  let sound
+  /** @type {p5.SoundFile} */ let sound
   let fft
 
   s.preload = () => {

@@ -9,6 +9,8 @@ import sketch from './sketch'
 globalThis.p5 = p5
 
 //* hacky solution, but p5 global variable doesn't load intime
-//*  if using normal p5 sound import
+//* if using normal p5 sound import
 //* p5 needs to be global for sound addon to import
-import('p5/lib/addons/p5.sound').then(() => new p5(sketch))
+await import('p5/lib/addons/p5.sound')
+
+new p5(sketch)
