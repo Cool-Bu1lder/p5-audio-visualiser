@@ -12,6 +12,8 @@
 // https://github.com/xenova/phonemizer.js/
 // https://github.com/hexgrad/kokoro/tree/main/kokoro.js
 
+// https://huggingface.co/docs/transformers.js/en/index
+
 import './style.css'
 import p5 from 'p5'
 

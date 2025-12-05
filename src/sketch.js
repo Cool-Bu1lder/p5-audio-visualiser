@@ -2,20 +2,36 @@ import p5 from 'p5'
 
 //--------------------------------------------
 
+import { pipeline } from '@huggingface/transformers'
+
+// https://huggingface.co/docs/transformers.js/api/pipelines#module_pipelines.TextGenerationPipeline
+const generator = await pipeline(
+  'text2text-generation',
+  'Xenova/LaMini-Flan-T5-783M',
+)
+const textInput = 'Ask questions to learn more about humans'
+const output = await generator(textInput, {
+  max_new_tokens: 100,
+})
+
+//--------------------------------------------
+
+console.log('Loading model')
+
 import { KokoroTTS } from 'kokoro-js'
 
 const model_id = 'onnx-community/Kokoro-82M-v1.0-ONNX'
 const tts = await KokoroTTS.from_pretrained(model_id, {
-  dtype: 'q8', // Options: "fp32", "fp16", "q8", "q4", "q4f16"
+  dtype: 'q4', // Options: "fp32", "fp16", "q8", "q4", "q4f16"
   device: 'wasm', // Options: "wasm", "webgpu" (web) or "cpu" (node). If using "webgpu", we recommend using dtype="fp32".
 })
 
-const text =
-  "Life is like a box of chocolates. You never know what you're gonna get."
-const audio = await tts.generate(text, {
+console.log('Generating texts')
+
+const audio = await tts.generate(output[0].generated_text, {
   // Use `tts.list_voices()` to list all available voices
   //voice: 'af_heart',
-  voice: 'am_santa',
+  voice: 'af_bella',
 })
 
 console.log(tts.list_voices())
