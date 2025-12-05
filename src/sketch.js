@@ -2,6 +2,8 @@ import p5 from 'p5'
 
 //--------------------------------------------
 
+console.log('Loading text2text model')
+
 import { pipeline } from '@huggingface/transformers'
 
 // https://huggingface.co/docs/transformers.js/api/pipelines#module_pipelines.TextGenerationPipeline
@@ -11,12 +13,12 @@ const generator = await pipeline(
 )
 const textInput = 'Ask questions to learn more about humans'
 const output = await generator(textInput, {
-  max_new_tokens: 100,
+  max_new_tokens: 20,
 })
 
 //--------------------------------------------
 
-console.log('Loading model')
+console.log('Loading text to speech model')
 
 import { KokoroTTS } from 'kokoro-js'
 
@@ -26,15 +28,14 @@ const tts = await KokoroTTS.from_pretrained(model_id, {
   device: 'wasm', // Options: "wasm", "webgpu" (web) or "cpu" (node). If using "webgpu", we recommend using dtype="fp32".
 })
 
-console.log('Generating texts')
+console.log('Generating voice')
 
 const audio = await tts.generate(output[0].generated_text, {
   // Use `tts.list_voices()` to list all available voices
-  //voice: 'af_heart',
   voice: 'af_bella',
 })
 
-console.log(tts.list_voices())
+//console.log(tts.list_voices())
 
 //--------------------------------------------
 
