@@ -1,43 +1,48 @@
 import p5 from 'p5'
-
-//--------------------------------------------
-
-console.log('Loading text2text model')
-
 import { pipeline } from '@huggingface/transformers'
+
+const onProgress = (progressInfo) => {
+  if (progressInfo.status === 'progress') {
+    const loaded = progressInfo.loaded
+    const total = progressInfo.total
+    const file = progressInfo.file
+
+    const percent = total ? Math.round((loaded / total) * 100) : 0
+
+    console.log(`Downloading ${file}: ${percent}% (${loaded}/${total} bytes)`)
+  } else if (progressInfo.status === 'done') {
+    console.log(`Finished loading ${progressInfo.file}.`)
+  } else if (progressInfo.status === 'ready') {
+    console.log('Model is fully loaded and ready for inference!')
+  }
+}
 
 // https://huggingface.co/docs/transformers.js/api/pipelines#module_pipelines.TextGenerationPipeline
 const generator = await pipeline(
   'text2text-generation',
   'Xenova/LaMini-Flan-T5-783M',
+  {
+    progress_callback: onProgress,
+  },
 )
 const textInput = 'Ask questions to learn more about humans'
 const output = await generator(textInput, {
   max_new_tokens: 20,
 })
 
-//--------------------------------------------
-
-console.log('Loading text to speech model')
-
-import { KokoroTTS } from 'kokoro-js'
-
-const model_id = 'onnx-community/Kokoro-82M-v1.0-ONNX'
-const tts = await KokoroTTS.from_pretrained(model_id, {
-  dtype: 'q4', // Options: "fp32", "fp16", "q8", "q4", "q4f16"
-  device: 'wasm', // Options: "wasm", "webgpu" (web) or "cpu" (node). If using "webgpu", we recommend using dtype="fp32".
+// https://huggingface.co/docs/transformers.js/api/pipelines#module_pipelines.TextToAudioPipeline
+const synthesizer = await pipeline(
+  'text-to-speech',
+  'onnx-community/Supertonic-TTS-ONNX',
+  {
+    progress_callback: onProgress,
+  },
+)
+const speaker_embeddings =
+  'https://huggingface.co/onnx-community/Supertonic-TTS-ONNX/resolve/main/voices/F1.bin'
+const audio = await synthesizer(output[0].generated_text, {
+  speaker_embeddings,
 })
-
-console.log('Generating voice')
-
-const audio = await tts.generate(output[0].generated_text, {
-  // Use `tts.list_voices()` to list all available voices
-  voice: 'af_bella',
-})
-
-//console.log(tts.list_voices())
-
-//--------------------------------------------
 
 const sketch = (/** @type {p5} */ s) => {
   /** @type {p5.SoundFile} */ let sound
